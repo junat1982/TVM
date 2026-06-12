@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TVM Enterprises — Technology & AI Consulting</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #080810;
+    --paper: #f6f3ed;
+    --gold: #b8963e;
+    --gold-light: #d4b06a;
+    --muted: #6b6760;
+    --rule: rgba(184,150,62,0.22);
+    --offwhite: #edeae2;
+    --dark2: #111118;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Cormorant Garamond', serif;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 999; opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 128px;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.3rem 3.5rem;
+    background: rgba(8,8,16,0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(184,150,62,0.15);
+  }
+
+  .nav-logo {
+    font-family: 'Syne', sans-serif; font-weight: 800;
+    font-size: 0.95rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--paper); text-decoration: none;
+  }
+  .nav-logo span { color: var(--gold); }
+
+  nav ul { list-style: none; display: flex; gap: 2.5rem; }
+
+  nav a {
+    font-family: 'DM Mono', monospace; font-size: 0.68rem;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: rgba(246,243,237,0.5); text-decoration: none; transition: color 0.2s;
+  }
+  nav a:hover { color: var(--gold); }
+
+  .nav-cta {
+    font-family: 'DM Mono', monospace; font-size: 0.66rem;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--ink) !important; background: var(--gold);
+    padding: 0.55rem 1.3rem; text-decoration: none;
+    transition: background 0.25s;
+  }
+  .nav-cta:hover { background: var(--gold-light) !important; }
+
+  /* ── HERO — full-screen services showcase ── */
+  #hero {
+    min-height: 100vh;
+    padding-top: 72px;
+    display: flex; flex-direction: column;
+    justify-content: center;
+    position: relative; overflow: hidden;
+  }
+
+  /* background grid */
+  #hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(184,150,62,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(184,150,62,0.06) 1px, transparent 1px);
+    background-size: 52px 52px;
+  }
+
+  /* radial glow */
+  #hero::after {
+    content: '';
+    position: absolute; top: -200px; left: 50%;
+    transform: translateX(-50%);
+    width: 900px; height: 700px; border-radius: 50%;
+    background: radial-gradient(ellipse, rgba(184,150,62,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-inner {
+    position: relative; z-index: 2;
+    padding: 4rem 3.5rem 3rem;
+  }
+
+  .hero-top {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    margin-bottom: 3.5rem; flex-wrap: wrap; gap: 2rem;
+  }
+
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace; font-size: 0.65rem;
+    letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold);
+    display: flex; align-items: center; gap: 1rem; margin-bottom: 1.2rem;
+  }
+  .hero-eyebrow::before {
+    content: ''; display: block; width: 36px; height: 1px; background: var(--gold);
+  }
+
+  h1 {
+    font-family: 'Cormorant Garamond', serif; font-weight: 300;
+    font-size: clamp(3rem, 5.5vw, 6rem); line-height: 1.0;
+    letter-spacing: -0.02em;
+  }
+  h1 em { font-style: italic; color: var(--gold); }
+
+  .hero-tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem; font-weight: 300; line-height: 1.7;
+    color: rgba(246,243,237,0.5); max-width: 44ch;
+    align-self: flex-end;
+  }
+
+  /* hero services strip */
+  .hero-services {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    border-top: 1px solid rgba(184,150,62,0.2);
+  }
+
+  .hs-card {
+    padding: 2.2rem 1.8rem;
+    border-right: 1px solid rgba(184,150,62,0.12);
+    position: relative; cursor: default;
+    transition: background 0.3s;
+    display: flex; flex-direction: column; gap: 0.9rem;
+  }
+  .hs-card:last-child { border-right: none; }
+  .hs-card:hover { background: rgba(184,150,62,0.06); }
+
+  .hs-num {
+    font-family: 'DM Mono', monospace; font-size: 0.55rem;
+    letter-spacing: 0.18em; color: var(--gold); opacity: 0.6;
+  }
+
+  .hs-icon { font-size: 1.4rem; }
+
+  .hs-title {
+    font-family: 'Syne', sans-serif; font-weight: 600;
+    font-size: 0.72rem; letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--paper); line-height: 1.4;
+  }
+
+  .hs-desc {
+    font-family: 'Cormorant Garamond', serif; font-size: 0.95rem;
+    font-weight: 300; line-height: 1.6;
+    color: rgba(246,243,237,0.4);
+    flex: 1;
+  }
+
+  .hs-arrow {
+    font-family: 'DM Mono', monospace; font-size: 0.6rem;
+    color: var(--gold); opacity: 0; transition: opacity 0.25s;
+    letter-spacing: 0.1em;
+  }
+  .hs-card:hover .hs-arrow { opacity: 1; }
+
+  /* hover accent line */
+  .hs-card::after {
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
+    height: 2px; background: var(--gold);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.35s ease;
+  }
+  .hs-card:hover::after { transform: scaleX(1); }
+
+  /* ── ABOUT ── */
+  #about {
+    background: var(--paper);
+    color: var(--ink);
+    padding: 8rem 3.5rem;
+    position: relative; overflow: hidden;
+  }
+
+  #about::before {
+    content: 'ABOUT';
+    position: absolute; right: -2rem; top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Syne', sans-serif; font-weight: 800;
+    font-size: 16vw; color: rgba(0,0,0,0.03);
+    pointer-events: none; white-space: nowrap; letter-spacing: 0.05em;
+  }
+
+  .about-grid {
+    display: grid; grid-template-columns: 1fr 1.6fr; gap: 6rem; align-items: start;
+    position: relative; z-index: 2;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace; font-size: 0.63rem;
+    letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold);
+    display: flex; align-items: center; gap: 0.9rem; margin-bottom: 1.2rem;
+  }
+  .section-label::after {
+    content: ''; flex: 1; height: 1px; background: var(--rule); max-width: 60px;
+  }
+
+  h2 {
+    font-family: 'Cormorant Garamond', serif; font-weight: 300;
+    font-size: clamp(2.2rem, 3.5vw, 3.4rem); line-height: 1.1;
+    margin-bottom: 0.5rem;
+  }
+  h2 em { font-style: italic; color: var(--gold); }
+
+  .about-statement {
+    font-size: 1.35rem; font-weight: 300; line-height: 1.75;
+    color: var(--ink); margin-bottom: 2rem;
+  }
+
+  .about-body {
+    font-size: 1.1rem; font-weight: 300; line-height: 1.8;
+    color: var(--muted); margin-bottom: 2.5rem;
+  }
+
+  /* impact numbers */
+  .impact-row {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 0; border: 1px solid var(--rule);
+    margin-bottom: 3rem;
+  }
+
+  .impact-cell {
+    padding: 1.8rem 1.5rem; border-right: 1px solid var(--rule);
+  }
+  .impact-cell:last-child { border-right: none; }
+
+  .impact-num {
+    font-family: 'Cormorant Garamond', serif; font-size: 2.8rem;
+    font-weight: 600; line-height: 1; color: var(--ink);
+    margin-bottom: 0.3rem;
+  }
+
+  .impact-label {
+    font-family: 'DM Mono', monospace; font-size: 0.58rem;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+  }
+
+  /* credentials column */
+  .about-credentials { position: sticky; top: 100px; }
+
+  .cred-block {
+    border-top: 2px solid var(--gold);
+    padding: 2rem 0 0;
+    margin-bottom: 2.5rem;
+  }
+
+  .cred-block-title {
+    font-family: 'Syne', sans-serif; font-weight: 700;
+    font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--ink); margin-bottom: 1.2rem;
+  }
+
+  .cred-item {
+    display: flex; align-items: center; gap: 0.9rem;
+    padding: 0.7rem 0; border-bottom: 1px solid var(--rule);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem; font-weight: 400; color: var(--ink);
+  }
+  .cred-item:last-child { border-bottom: none; }
+
+  .cred-dot {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--gold);
+    flex-shrink: 0;
+  }
+
+  .cert-wrap {
+    display: flex; flex-wrap: wrap; gap: 0.55rem;
+  }
+
+  .cert-chip {
+    font-family: 'DM Mono', monospace; font-size: 0.58rem;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    border: 1px solid var(--rule); padding: 0.35rem 0.8rem;
+    color: var(--muted);
+  }
+
+  /* ── EXPERTISE ── */
+  #expertise {
+    background: var(--dark2); color: var(--paper);
+    padding: 8rem 3.5rem;
+  }
+
+  #expertise .section-label { color: var(--gold); }
+  #expertise h2 { color: var(--paper); }
+
+  .exp-intro-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4rem;
+    align-items: end; margin-bottom: 5rem;
+  }
+
+  .exp-sub {
+    font-size: 1.1rem; font-weight: 300; line-height: 1.75;
+    color: rgba(246,243,237,0.45); align-self: end;
+  }
+
+  /* domain cards */
+  .domain-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+    background: rgba(184,150,62,0.12);
+  }
+
+  .domain-card {
+    background: var(--dark2); padding: 2.5rem 2rem;
+    position: relative; cursor: default;
+    transition: background 0.3s;
+  }
+  .domain-card:hover { background: rgba(184,150,62,0.06); }
+
+  .domain-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
+    height: 2px; background: var(--gold);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+  .domain-card:hover::before { transform: scaleX(1); }
+
+  .domain-icon { font-size: 1.6rem; margin-bottom: 1.2rem; display: block; }
+
+  .domain-title {
+    font-family: 'Syne', sans-serif; font-weight: 700;
+    font-size: 0.75rem; letter-spacing: 0.07em; text-transform: uppercase;
+    color: var(--paper); margin-bottom: 0.9rem;
+  }
+
+  .domain-body {
+    font-family: 'Cormorant Garamond', serif; font-size: 1.0rem;
+    font-weight: 300; line-height: 1.65;
+    color: rgba(246,243,237,0.42);
+  }
+
+  .domain-tags {
+    display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1.2rem;
+  }
+
+  .domain-tag {
+    font-family: 'DM Mono', monospace; font-size: 0.52rem;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    border: 1px solid rgba(184,150,62,0.25);
+    padding: 0.25rem 0.6rem; color: var(--gold);
+  }
+
+  /* ── RECOGNITION ── */
+  #recognition {
+    background: var(--paper); color: var(--ink);
+    padding: 7rem 3.5rem;
+  }
+
+  .rec-layout {
+    display: grid; grid-template-columns: 1fr 2fr; gap: 5rem; align-items: start;
+  }
+
+  .rec-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+  }
+
+  .rec-card {
+    border: 1px solid var(--rule); padding: 2rem 1.8rem;
+    transition: border-color 0.25s, transform 0.25s;
+    cursor: default;
+  }
+  .rec-card:hover { border-color: var(--gold); transform: translateY(-3px); }
+
+  .rec-icon { font-size: 1.8rem; margin-bottom: 1rem; display: block; }
+
+  .rec-card h4 {
+    font-family: 'Syne', sans-serif; font-weight: 700;
+    font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--ink); margin-bottom: 0.6rem;
+  }
+
+  .rec-card p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.0rem; font-weight: 300; line-height: 1.65; color: var(--muted);
+  }
+
+  /* ── AI RESEARCH ── */
+  #ai-work {
+    background: var(--ink); color: var(--paper);
+    padding: 7rem 3.5rem;
+  }
+
+  #ai-work .section-label { color: var(--gold); }
+  #ai-work h2 { color: var(--paper); }
+
+  .pub-layout {
+    display: grid; grid-template-columns: 1.1fr 2fr; gap: 5rem;
+    align-items: start; margin-top: 4rem;
+  }
+
+  .pub-intro {
+    font-size: 1.05rem; font-weight: 300; line-height: 1.8;
+    color: rgba(246,243,237,0.45);
+  }
+
+  .pub-list { display: flex; flex-direction: column; gap: 0; }
+
+  .pub-item {
+    display: grid; grid-template-columns: 90px 1fr;
+    gap: 2rem; align-items: center;
+    padding: 1.5rem 1.2rem;
+    border-bottom: 1px solid rgba(184,150,62,0.12);
+    transition: background 0.25s, padding-left 0.25s;
+    cursor: default;
+  }
+  .pub-item:hover { background: rgba(184,150,62,0.05); padding-left: 1.8rem; }
+
+  .pub-type {
+    font-family: 'DM Mono', monospace; font-size: 0.58rem;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold);
+  }
+
+  .pub-text {
+    font-family: 'Cormorant Garamond', serif; font-size: 1.08rem;
+    font-weight: 300; line-height: 1.6; color: rgba(246,243,237,0.7);
+  }
+
+  /* ── CONTACT ── */
+  #contact {
+    background: var(--gold); color: var(--ink);
+    padding: 8rem 3.5rem;
+    position: relative; overflow: hidden;
+  }
+
+  #contact::before {
+    content: '→';
+    position: absolute; right: 3rem; top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Cormorant Garamond', serif; font-weight: 300;
+    font-size: 22vw; color: rgba(0,0,0,0.06);
+    pointer-events: none; line-height: 1;
+  }
+
+  #contact .section-label { color: var(--ink); opacity: 0.6; }
+  #contact .section-label::after { background: rgba(0,0,0,0.2); }
+
+  .contact-inner { position: relative; z-index: 2; }
+
+  #contact h2 { color: var(--ink); font-size: clamp(2.5rem, 5vw, 5rem); margin-bottom: 1.5rem; }
+
+  .contact-p {
+    font-size: 1.2rem; font-weight: 300; line-height: 1.7;
+    color: rgba(8,8,16,0.65); max-width: 52ch; margin-bottom: 3rem;
+  }
+
+  .contact-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+  .cbtn {
+    font-family: 'DM Mono', monospace; font-size: 0.68rem;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    text-decoration: none; padding: 1rem 2.2rem;
+    transition: all 0.25s; display: inline-block;
+  }
+
+  .cbtn-dark { background: var(--ink); color: var(--paper); }
+  .cbtn-dark:hover { background: #1e1e2e; }
+
+  .cbtn-ghost {
+    border: 2px solid var(--ink); color: var(--ink); background: transparent;
+  }
+  .cbtn-ghost:hover { background: var(--ink); color: var(--paper); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: #040407; padding: 2rem 3.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+    border-top: 1px solid rgba(184,150,62,0.1);
+  }
+
+  footer p {
+    font-family: 'DM Mono', monospace; font-size: 0.58rem;
+    letter-spacing: 0.12em; color: rgba(246,243,237,0.22); text-transform: uppercase;
+  }
+
+  footer span {
+    font-family: 'DM Mono', monospace; font-size: 0.58rem;
+    letter-spacing: 0.12em; color: var(--gold); opacity: 0.5; text-transform: uppercase;
+  }
+
+  /* ── ANIMATIONS ── */
+  .fade-up {
+    opacity: 0; transform: translateY(28px);
+    transition: opacity 0.75s ease, transform 0.75s ease;
+  }
+  .fade-up.visible { opacity: 1; transform: translateY(0); }
+
+  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar-track { background: var(--ink); }
+  ::-webkit-scrollbar-thumb { background: var(--gold); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 1100px) {
+    .hero-services { grid-template-columns: repeat(3, 1fr); }
+    .domain-grid { grid-template-columns: repeat(2, 1fr); }
+    .exp-intro-row { grid-template-columns: 1fr; gap: 1.5rem; }
+  }
+
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    nav ul { display: none; }
+    #hero, #about, #expertise, #recognition, #ai-work, #contact { padding: 4rem 1.5rem; }
+    .hero-inner { padding: 3rem 1.5rem 2rem; }
+    .hero-top { flex-direction: column; align-items: flex-start; }
+    .hero-services { grid-template-columns: 1fr 1fr; }
+    .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .about-credentials { position: static; }
+    .impact-row { grid-template-columns: 1fr; }
+    .impact-cell { border-right: none; border-bottom: 1px solid var(--rule); }
+    .rec-layout { grid-template-columns: 1fr; gap: 2rem; }
+    .rec-grid { grid-template-columns: 1fr; }
+    .pub-layout { grid-template-columns: 1fr; gap: 2rem; }
+    .domain-grid { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">TVM <span>ENTERPRISES</span></a>
+  <ul>
+    <li><a href="#about">About</a></li>
+    <li><a href="#expertise">Expertise</a></li>
+    <li><a href="#recognition">Recognition</a></li>
+    <li><a href="#ai-work">Research</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Let's Talk</a>
+</nav>
+
+<!-- HERO — Services Showcase -->
+<section id="hero">
+  <div class="hero-inner">
+    <div class="hero-top">
+      <div>
+        <div class="hero-eyebrow">Technology · AI · Infrastructure</div>
+        <h1>Enterprise Solutions<br>Built to <em>Scale</em></h1>
+      </div>
+      <p class="hero-tagline">
+        Strategic advisory and hands-on technical leadership
+        for organizations navigating complexity at scale —
+        from cloud transformation to AI-guided compliance.
+      </p>
+    </div>
+
+    <!-- Six service pillars across the bottom of the hero -->
+    <div class="hero-services">
+      <div class="hs-card fade-up">
+        <span class="hs-num">01</span>
+        <span class="hs-icon">🏗️</span>
+        <div class="hs-title">Infrastructure Strategy</div>
+        <div class="hs-desc">Multi-cloud architecture, platform modernization, and 99.99% uptime engineering across global environments.</div>
+        <span class="hs-arrow">Explore →</span>
+      </div>
+      <div class="hs-card fade-up">
+        <span class="hs-num">02</span>
+        <span class="hs-icon">🔒</span>
+        <div class="hs-title">Cybersecurity & Compliance</div>
+        <div class="hs-desc">Zero Trust architecture, SOC 2, ISO 27001, and NIST 800-53 programs built to pass audits — and attacks.</div>
+        <span class="hs-arrow">Explore →</span>
+      </div>
+      <div class="hs-card fade-up">
+        <span class="hs-num">03</span>
+        <span class="hs-icon">🤖</span>
+        <div class="hs-title">AI & Generative AI</div>
+        <div class="hs-desc">AI-guided compliance frameworks, resiliency models, and generative AI integration for enterprise operations.</div>
+        <span class="hs-arrow">Explore →</span>
+      </div>
+      <div class="hs-card fade-up">
+        <span class="hs-num">04</span>
+        <span class="hs-icon">☁️</span>
+        <div class="hs-title">Cloud Migration</div>
+        <div class="hs-desc">Large-scale workload migrations with Terraform and Kubernetes — cutting costs while hardening resilience.</div>
+        <span class="hs-arrow">Explore →</span>
+      </div>
+      <div class="hs-card fade-up">
+        <span class="hs-num">05</span>
+        <span class="hs-icon">⚡</span>
+        <div class="hs-title">SRE & Reliability</div>
+        <div class="hs-desc">Incident command, blameless postmortems, and observability pipelines that reduce MTTR by up to 60%.</div>
+        <span class="hs-arrow">Explore →</span>
+      </div>
+      <div class="hs-card fade-up">
+        <span class="hs-num">06</span>
+        <span class="hs-icon">🎯</span>
+        <div class="hs-title">Technology Advisory</div>
+        <div class="hs-desc">C-suite technology strategy, board-level briefings, and budget governance — backed by a Harvard MBA.</div>
+        <span class="hs-arrow">Explore →</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-grid">
+
+    <!-- LEFT: credentials column -->
+    <div class="about-credentials fade-up">
+      <div class="cred-block">
+        <div class="cred-block-title">Our Practice Areas</div>
+        <div class="cred-item"><span class="cred-dot"></span>Cloud Architecture & Migration</div>
+        <div class="cred-item"><span class="cred-dot"></span>Cybersecurity & Compliance</div>
+        <div class="cred-item"><span class="cred-dot"></span>AI & Generative AI Strategy</div>
+        <div class="cred-item"><span class="cred-dot"></span>Infrastructure Automation</div>
+        <div class="cred-item"><span class="cred-dot"></span>SRE & Reliability Engineering</div>
+        <div class="cred-item"><span class="cred-dot"></span>Technology Advisory</div>
+      </div>
+
+      <div class="cred-block">
+        <div class="cred-block-title">Industries We Serve</div>
+        <div class="cred-item"><span class="cred-dot"></span>Pharma & Life Sciences</div>
+        <div class="cred-item"><span class="cred-dot"></span>Financial Services</div>
+        <div class="cred-item"><span class="cred-dot"></span>Healthcare</div>
+        <div class="cred-item"><span class="cred-dot"></span>Technology & SaaS</div>
+        <div class="cred-item"><span class="cred-dot"></span>Government & Public Sector</div>
+      </div>
+    </div>
+
+    <!-- RIGHT: About narrative -->
+    <div>
+      <div class="section-label">About</div>
+      <h2>Where <em>Strategy</em><br>Meets Engineering</h2>
+
+      <p class="about-statement" style="margin-top:1.5rem;">
+        We help organizations build technology that doesn't just work today —
+        it scales, survives, and evolves through whatever comes next.
+      </p>
+
+      <p class="about-body">
+        With over 15 years of hands-on leadership across global enterprise environments,
+        we operate at the intersection of boardroom strategy and deep engineering execution.
+        Whether the challenge is a multi-cloud migration, a failing security posture, or an
+        organization struggling to operationalize AI — we bring the technical depth
+        to diagnose it and the strategic clarity to fix it.
+      </p>
+
+      <p class="about-body">
+        We have architected platforms serving hundreds of millions of users, led teams
+        through high-stakes regulatory audits, and built engineering cultures where
+        reliability isn't an afterthought — it's the foundation. Our work spans
+        financial services, healthcare, pharmaceuticals, and critical infrastructure,
+        giving us fluency in the compliance and risk frameworks that govern each.
+      </p>
+
+      <p class="about-body">
+        As published AI researchers and recognized technology leaders, we bring both
+        the practitioner's instinct and the scholar's rigor to every engagement —
+        translating engineering decisions into measurable business value.
+      </p>
+
+      <!-- Impact numbers -->
+      <div class="impact-row">
+        <div class="impact-cell">
+          <div class="impact-num">$12M</div>
+          <div class="impact-label">Annual Cost Reduction</div>
+        </div>
+        <div class="impact-cell">
+          <div class="impact-num">60%</div>
+          <div class="impact-label">MTTR Improvement</div>
+        </div>
+        <div class="impact-cell">
+          <div class="impact-num">3,000+</div>
+          <div class="impact-label">Workloads Migrated</div>
+        </div>
+      </div>
+
+      <p class="about-body" style="margin-bottom:0;">
+        Whether you need a strategic thought partner for a major cloud transformation,
+        a hands-on architecture lead for a security overhaul, or an advisor to
+        operationalize AI inside your organization — we bring the full stack:
+        technical depth, strategic clarity, and the credibility to lead teams and
+        influence executives.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<!-- EXPERTISE DOMAINS -->
+<section id="expertise">
+  <div class="exp-intro-row">
+    <div>
+      <div class="section-label">Expertise</div>
+      <h2>Where We<br><em>Deliver</em></h2>
+    </div>
+    <p class="exp-sub">
+      Eight practice areas built through decades of enterprise delivery —
+      each grounded in real outcomes, not theoretical frameworks.
+    </p>
+  </div>
+
+  <div class="domain-grid">
+    <div class="domain-card fade-up">
+      <span class="domain-icon">☁️</span>
+      <div class="domain-title">Cloud Architecture</div>
+      <div class="domain-body">Designing and operating multi-cloud environments on AWS, Azure, and GCP with 99.99% uptime SLAs. From greenfield builds to legacy lift-and-shift migrations at enterprise scale.</div>
+      <div class="domain-tags">
+        <span class="domain-tag">AWS</span><span class="domain-tag">Azure</span><span class="domain-tag">GCP</span><span class="domain-tag">Kubernetes</span>
+      </div>
+    </div>
+    <div class="domain-card fade-up">
+      <span class="domain-icon">🔒</span>
+      <div class="domain-title">Cybersecurity & Zero Trust</div>
+      <div class="domain-body">End-to-end security programs covering architecture, operations, and compliance. Zero critical audit findings across three consecutive SOC 2 Type II assessment cycles.</div>
+      <div class="domain-tags">
+        <span class="domain-tag">SOC 2</span><span class="domain-tag">NIST</span><span class="domain-tag">ISO 27001</span><span class="domain-tag">Zero Trust</span>
+      </div>
+    </div>
+    <div class="domain-card fade-up">
+      <span class="domain-icon">🤖</span>
+      <div class="domain-title">AI & Generative AI</div>
+      <div class="domain-body">Translating AI research into enterprise deployments. AI-guided compliance, resiliency frameworks, and Human-Centric AI models — published in Springer, JAIMLS, and peer-reviewed conferences.</div>
+      <div class="domain-tags">
+        <span class="domain-tag">Gen AI</span><span class="domain-tag">LLMs</span><span class="domain-tag">Human-Centric AI</span>
+      </div>
+    </div>
+    <div class="domain-card fade-up">
+      <span class="domain-icon">⚙️</span>
+      <div class="domain-title">Infrastructure Automation</div>
+      <div class="domain-body">Eliminating toil through infrastructure-as-code, self-healing systems, and CI/CD pipelines that autonomously remediate 70% of recurring incidents before they escalate.</div>
+      <div class="domain-tags">
+        <span class="domain-tag">Terraform</span><span class="domain-tag">Ansible</span><span class="domain-tag">Jenkins</span><span class="domain-tag">GitHub Actions</span>
+      </div>
+    </div>
+    <div class="domain-card fade-up">
+      <span class="domain-icon">📋</span>
+      <div class="domain-title">Regulatory Compliance</div>
+      <div class="domain-body">Deep expertise in highly regulated sectors — pharmaceutical GxP, FDA 21 CFR Part 11, EU Annex 11, SOC 2, HIPAA, and NIST — ensuring compliance without slowing delivery velocity.</div>
+      <div class="domain-tags">
+        <span class="domain-tag">GxP</span><span class="domain-tag">FDA CFR 21</span><span class="domain-tag">HIPAA</span><span class="domain-tag">EU Annex 11</span>
+      </div>
+    </div>
+    <div class="domain-card fade-up">
+      <span class="domain-icon">⚡</span>
+      <div class="domain-title">SRE & Incident Management</div>
+      <div class="domain-body">Building reliability cultures through blameless postmortems, real-time observability, and structured escalation. Proven 60% MTTR reduction through systematic process redesign.</div>
+      <div class="domain-tags">
+        <span class="domain-tag">Splunk</span><span class="domain-tag">PagerDuty</span><span class="domain-tag">Postmortems</span>
+      </div>
+    </div>
+    <div class="domain-card fade-up">
+      <span class="domain-icon">🛡️</span>
+      <div class="domain-title">Disaster Recovery & BCP</div>
+      <div class="domain-body">Architecting recovery solutions that actually work under pressure. RPO under 15 minutes, RTO under 2 hours for Tier-1 applications — validated, tested, and maintained.</div>
+      <div class="domain-tags">
+        <span class="domain-tag">RPO/RTO</span><span class="domain-tag">DR Planning</span><span class="domain-tag">BCP</span>
+      </div>
+    </div>
+    <div class="domain-card fade-up">
+      <span class="domain-icon">🎯</span>
+      <div class="domain-title">Technology Strategy</div>
+      <div class="domain-body">Strategic advisory linking infrastructure investments to business outcomes. $40M annual budget governance, board-level briefings, and cross-functional executive alignment.</div>
+      <div class="domain-tags">
+        <span class="domain-tag">CapEx Planning</span><span class="domain-tag">C-Suite Advisory</span><span class="domain-tag">IT Governance</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RECOGNITION -->
+<section id="recognition">
+  <div class="rec-layout">
+    <div>
+      <div class="section-label">Recognition</div>
+      <h2>Peer-Validated<br><em>Standing</em></h2>
+      <p style="font-size:1.05rem;font-weight:300;line-height:1.75;color:var(--muted);margin-top:1.2rem;">
+        Independent recognition from scientific societies, industry awards bodies,
+        and scholarly journals — not just organizational titles.
+      </p>
+    </div>
+    <div class="rec-grid">
+      <div class="rec-card fade-up">
+        <span class="rec-icon">🏆</span>
+        <h4>Globee Award</h4>
+        <p>Recipient for excellence in AI and technology innovation — independent, third-party recognition of contributions beyond organizational affiliation.</p>
+      </div>
+      <div class="rec-card fade-up">
+        <span class="rec-icon">⚡</span>
+        <h4>IEEE Senior Member</h4>
+        <p>Elected IEEE Senior Member status — peer-reviewed recognition as an expert and sustained contributor in the field of engineering and technology.</p>
+      </div>
+      <div class="rec-card fade-up">
+        <span class="rec-icon">🔬</span>
+        <h4>Sigma Xi</h4>
+        <p>Inducted into Sigma Xi, The Scientific Research Honor Society — one of the most prestigious research recognition bodies in the world.</p>
+      </div>
+      <div class="rec-card fade-up">
+        <span class="rec-icon">📝</span>
+        <h4>Peer Reviewer & Judge</h4>
+        <p>Trusted technical judge for IJMRSET and IJARETY scholarly journals — responsible for evaluating the original research of other experts.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AI RESEARCH -->
+<section id="ai-work">
+  <div class="section-label">Scholarly Work</div>
+  <h2>AI Research &<br><em>Publications</em></h2>
+
+  <div class="pub-layout">
+    <div class="pub-intro fade-up">
+      Peer-reviewed contributions advancing Artificial Intelligence,
+      Generative AI, Human-Centric AI, and dynamic IT architectures —
+      with direct national relevance to U.S. innovation and competitiveness.
+      Published across Springer journals, JAIMLS, LAJISPR, and international
+      conference proceedings.
+    </div>
+
+    <div class="pub-list">
+      <div class="pub-item fade-up">
+        <span class="pub-type">Springer</span>
+        <span class="pub-text">Peer-reviewed research on Artificial Intelligence and Human-Centric AI systems — revised manuscript under editorial review</span>
+      </div>
+      <div class="pub-item fade-up">
+        <span class="pub-type">JAIMLS</span>
+        <span class="pub-text">Published work in the Journal of Artificial Intelligence, Machine Learning & Systems</span>
+      </div>
+      <div class="pub-item fade-up">
+        <span class="pub-type">LAJISPR</span>
+        <span class="pub-text">Scholarly contributions to the Latin American Journal of Information Systems and Policy Research</span>
+      </div>
+      <div class="pub-item fade-up">
+        <span class="pub-type">Conference</span>
+        <span class="pub-text">Dynamic IT Architectures and Generative AI systems — peer-reviewed international conference proceedings</span>
+      </div>
+      <div class="pub-item fade-up">
+        <span class="pub-type">Media</span>
+        <span class="pub-text">Featured in OneIndia and India.com for AI-driven cybersecurity innovations and public-sector digital transformation</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-inner">
+    <div class="section-label">Get In Touch</div>
+    <h2>Let's Build<br><em>Something</em> Lasting</h2>
+    <p class="contact-p">
+      Whether you need strategic advisory, architecture leadership, or help
+      operationalizing AI — we bring the full stack of experience your
+      organization needs to move with confidence.
+    </p>
+    <div class="contact-btns">
+      <a href="mailto:Contact@TVMEnt.Co" class="cbtn cbtn-dark">✉ &nbsp;Contact@TVMEnt.Co</a>
+      <a href="tel:3012334953" class="cbtn cbtn-ghost">📞 &nbsp;301.233.4953</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 TVM Enterprises — Technology & AI Consulting</p>
+  <span>tvment.co</span>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(el => {
+      if (el.isIntersecting) el.target.classList.add('visible');
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('.fade-up').forEach((el, i) => {
+    el.style.transitionDelay = `${(i % 6) * 0.07}s`;
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>
