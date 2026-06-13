@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>TVM Enterprises — Digital Cards</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,400&family=DM+Mono:wght@300;400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root {
+    --ink: #080810;
+    --gold: #c8961e;
+    --gold-dim: rgba(200,150,30,0.15);
+    --paper: #f6f3ed;
+    --muted: #7a788a;
+    --border: rgba(255,255,255,0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: #0c0c16;
+    font-family: 'Cormorant Garamond', serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem 4rem;
+    gap: 1rem;
+  }
+
+  /* ── TOGGLE ── */
+  .toggle-wrap {
+    display: flex;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    border-radius: 40px;
+    padding: 4px;
+    gap: 4px;
+    margin-bottom: 1rem;
+  }
+
+  .toggle-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    padding: 0.5rem 1.4rem;
+    border-radius: 30px;
+    border: none;
+    background: transparent;
+    color: rgba(255,255,255,0.4);
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+
+  .toggle-btn.active {
+    background: var(--gold);
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  /* ── CARD CONTAINER ── */
+  .card-page { display: none; flex-direction: column; align-items: center; gap: 1.2rem; width: 100%; max-width: 420px; }
+  .card-page.active { display: flex; }
+
+  /* ── MAIN CARD ── */
+  .dcard {
+    width: 100%;
+    background: linear-gradient(145deg, #111120 0%, #0a0a14 100%);
+    border: 1px solid rgba(200,150,30,0.2);
+    border-radius: 20px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+  }
+
+  /* grid bg */
+  .dcard::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(184,150,62,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(184,150,62,0.04) 1px, transparent 1px);
+    background-size: 28px 28px;
+    border-radius: 20px;
+  }
+
+  /* glow */
+  .dcard::after {
+    content: '';
+    position: absolute; top: -60px; right: -60px;
+    width: 220px; height: 220px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(200,150,30,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .dcard-inner { position: relative; z-index: 2; }
+
+  /* logo */
+  .dcard-logo {
+    display: flex; align-items: center; gap: 0.8rem;
+    margin-bottom: 1.8rem;
+  }
+
+  .logo-box {
+    width: 44px; height: 44px;
+    background: var(--gold);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .logo-box span {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 1rem;
+    color: var(--ink); letter-spacing: 0.05em;
+  }
+
+  .logo-text-wrap { display: flex; flex-direction: column; gap: 1px; }
+
+  .logo-name {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 0.85rem;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: #fff;
+  }
+
+  .logo-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.5rem; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--gold);
+  }
+
+  /* avatar */
+  .dcard-avatar {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold), #8a6010);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem; font-weight: 600; color: var(--ink);
+    margin-bottom: 1rem;
+    border: 2px solid rgba(200,150,30,0.3);
+  }
+
+  /* person info */
+  .dcard-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600; font-size: 2rem;
+    color: #fff; line-height: 1; margin-bottom: 0.3rem;
+  }
+
+  .dcard-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--gold);
+    margin-bottom: 1.5rem;
+  }
+
+  /* divider */
+  .dcard-divider {
+    height: 1px;
+    background: linear-gradient(90deg, rgba(200,150,30,0.3), transparent);
+    margin-bottom: 1.5rem;
+  }
+
+  /* contact items */
+  .dcard-contacts { display: flex; flex-direction: column; gap: 0.7rem; }
+
+  .dcard-contact {
+    display: flex; align-items: center; gap: 0.8rem;
+    text-decoration: none;
+    padding: 0.6rem 0.8rem;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+    transition: all 0.2s;
+  }
+
+  .dcard-contact:hover, .dcard-contact:active {
+    background: var(--gold-dim);
+    border-color: rgba(200,150,30,0.3);
+  }
+
+  .contact-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: rgba(200,150,30,0.12);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.9rem; flex-shrink: 0;
+  }
+
+  .contact-info { display: flex; flex-direction: column; gap: 1px; }
+
+  .contact-type {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.48rem; letter-spacing: 0.15em;
+    text-transform: uppercase; color: var(--muted);
+  }
+
+  .contact-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem; letter-spacing: 0.06em;
+    color: rgba(255,255,255,0.75);
+  }
+
+  /* ── ACTION BUTTONS ── */
+  .action-row {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 0.7rem; width: 100%;
+  }
+
+  .action-btn {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 0.4rem;
+    padding: 0.9rem 0.5rem;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.03);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+
+  .action-btn:hover, .action-btn:active {
+    background: var(--gold-dim);
+    border-color: rgba(200,150,30,0.35);
+  }
+
+  .action-icon { font-size: 1.3rem; }
+
+  .action-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.52rem; letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+  }
+
+  /* save contact — full width gold */
+  .save-btn {
+    width: 100%;
+    display: flex; align-items: center; justify-content: center;
+    gap: 0.8rem;
+    padding: 1rem;
+    border-radius: 12px;
+    background: var(--gold);
+    border: none; cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+
+  .save-btn:hover { background: #d4a93a; }
+
+  .save-btn-icon { font-size: 1.1rem; }
+
+  .save-btn-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ink);
+    font-weight: 500;
+  }
+
+  /* ── QR CODE ── */
+  .qr-wrap {
+    width: 100%;
+    background: linear-gradient(145deg, #111120, #0a0a14);
+    border: 1px solid rgba(200,150,30,0.2);
+    border-radius: 16px;
+    padding: 1.5rem;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 1rem;
+  }
+
+  .qr-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--gold);
+  }
+
+  .qr-box {
+    background: white;
+    padding: 12px; border-radius: 10px;
+    display: inline-block;
+  }
+
+  .qr-sub {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55rem; letter-spacing: 0.12em;
+    text-transform: uppercase; color: rgba(255,255,255,0.25);
+    text-align: center;
+  }
+
+  /* ── SHARE ROW ── */
+  .share-row {
+    display: flex; gap: 0.7rem;
+    justify-content: center; width: 100%;
+  }
+
+  .share-btn {
+    flex: 1;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 0.35rem;
+    padding: 0.8rem 0.4rem;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: rgba(255,255,255,0.03);
+    cursor: pointer; transition: all 0.2s;
+  }
+
+  .share-btn:hover { background: var(--gold-dim); border-color: rgba(200,150,30,0.3); }
+
+  .share-icon { font-size: 1.2rem; }
+  .share-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.48rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: rgba(255,255,255,0.35);
+  }
+
+  /* toast */
+  .toast {
+    position: fixed; bottom: 2rem; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--gold); color: var(--ink);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem; letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.7rem 1.5rem; border-radius: 30px;
+    transition: transform 0.3s ease;
+    z-index: 999; white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- TOGGLE -->
+<div class="toggle-wrap">
+  <button class="toggle-btn active" onclick="switchCard('tanuj')">Tanuj Mathur</button>
+  <button class="toggle-btn" onclick="switchCard('khushboo')">Khushboo Nag</button>
+</div>
+
+<!-- ══════════ TANUJ CARD ══════════ -->
+<div class="card-page active" id="card-tanuj">
+
+  <!-- Main Card -->
+  <div class="dcard">
+    <div class="dcard-inner">
+      <div class="dcard-logo">
+        <div class="logo-box"><span>TVM</span></div>
+        <div class="logo-text-wrap">
+          <div class="logo-name">Enterprises</div>
+          <div class="logo-sub">Technology · AI · Infrastructure</div>
+        </div>
+      </div>
+      <div class="dcard-avatar">TM</div>
+      <div class="dcard-name">Tanuj Mathur</div>
+      <div class="dcard-title">Technology Advisor</div>
+      <div class="dcard-divider"></div>
+      <div class="dcard-contacts">
+        <a href="tel:3012334953" class="dcard-contact">
+          <div class="contact-icon">📞</div>
+          <div class="contact-info">
+            <span class="contact-type">Phone</span>
+            <span class="contact-value">301.233.4953</span>
+          </div>
+        </a>
+        <a href="mailto:contact@tvment.co" class="dcard-contact">
+          <div class="contact-icon">✉️</div>
+          <div class="contact-info">
+            <span class="contact-type">Email</span>
+            <span class="contact-value">contact@tvment.co</span>
+          </div>
+        </a>
+        <a href="https://tvment.co" target="_blank" class="dcard-contact">
+          <div class="contact-icon">🌐</div>
+          <div class="contact-info">
+            <span class="contact-type">Website</span>
+            <span class="contact-value">tvment.co</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Save Contact -->
+  <button class="save-btn" onclick="downloadVCard('tanuj')">
+    <span class="save-btn-icon">👤</span>
+    <span class="save-btn-text">Save to Contacts</span>
+  </button>
+
+  <!-- Action Buttons -->
+  <div class="action-row">
+    <a href="sms:3012334953" class="action-btn">
+      <span class="action-icon">💬</span>
+      <span class="action-label">Text</span>
+    </a>
+    <a href="https://wa.me/13012334953" target="_blank" class="action-btn">
+      <span class="action-icon">📱</span>
+      <span class="action-label">WhatsApp</span>
+    </a>
+    <a href="mailto:contact@tvment.co" class="action-btn">
+      <span class="action-icon">📧</span>
+      <span class="action-label">Email</span>
+    </a>
+    <button class="action-btn" onclick="shareCard('tanuj')">
+      <span class="action-icon">🔗</span>
+      <span class="action-label">Share Link</span>
+    </button>
+  </div>
+
+  <!-- QR Code -->
+  <div class="qr-wrap">
+    <div class="qr-title">📷 Scan to Connect</div>
+    <div class="qr-box" id="qr-tanuj"></div>
+    <div class="qr-sub">Scan with phone camera · Opens contact card</div>
+  </div>
+
+  <!-- Share Row -->
+  <div class="share-row">
+    <button class="share-btn" onclick="shareViaWhatsApp('tanuj')">
+      <span class="share-icon">💚</span>
+      <span class="share-label">WhatsApp</span>
+    </button>
+    <button class="share-btn" onclick="shareViaEmail('tanuj')">
+      <span class="share-icon">📨</span>
+      <span class="share-label">Email</span>
+    </button>
+    <button class="share-btn" onclick="copyLink('tanuj')">
+      <span class="share-icon">📋</span>
+      <span class="share-label">Copy Link</span>
+    </button>
+    <button class="share-btn" onclick="nativeShare('tanuj')">
+      <span class="share-icon">⬆️</span>
+      <span class="share-label">More</span>
+    </button>
+  </div>
+
+</div>
+
+<!-- ══════════ KHUSHBOO CARD ══════════ -->
+<div class="card-page" id="card-khushboo">
+
+  <!-- Main Card -->
+  <div class="dcard">
+    <div class="dcard-inner">
+      <div class="dcard-logo">
+        <div class="logo-box"><span>TVM</span></div>
+        <div class="logo-text-wrap">
+          <div class="logo-name">Enterprises</div>
+          <div class="logo-sub">Technology · AI · Infrastructure</div>
+        </div>
+      </div>
+      <div class="dcard-avatar">KN</div>
+      <div class="dcard-name">Khushboo Nag</div>
+      <div class="dcard-title">Founder</div>
+      <div class="dcard-divider"></div>
+      <div class="dcard-contacts">
+        <a href="tel:9172322527" class="dcard-contact">
+          <div class="contact-icon">📞</div>
+          <div class="contact-info">
+            <span class="contact-type">Phone</span>
+            <span class="contact-value">917.232.2527</span>
+          </div>
+        </a>
+        <a href="mailto:contact@tvment.co" class="dcard-contact">
+          <div class="contact-icon">✉️</div>
+          <div class="contact-info">
+            <span class="contact-type">Email</span>
+            <span class="contact-value">contact@tvment.co</span>
+          </div>
+        </a>
+        <a href="https://tvment.co" target="_blank" class="dcard-contact">
+          <div class="contact-icon">🌐</div>
+          <div class="contact-info">
+            <span class="contact-type">Website</span>
+            <span class="contact-value">tvment.co</span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Save Contact -->
+  <button class="save-btn" onclick="downloadVCard('khushboo')">
+    <span class="save-btn-icon">👤</span>
+    <span class="save-btn-text">Save to Contacts</span>
+  </button>
+
+  <!-- Action Buttons -->
+  <div class="action-row">
+    <a href="tel:9172322527" class="action-btn">
+      <span class="action-icon">📞</span>
+      <span class="action-label">Call</span>
+    </a>
+    <a href="sms:9172322527" class="action-btn">
+      <span class="action-icon">💬</span>
+      <span class="action-label">Text</span>
+    </a>
+    <a href="https://wa.me/19172322527" target="_blank" class="action-btn">
+      <span class="action-icon">📱</span>
+      <span class="action-label">WhatsApp</span>
+    </a>
+    <button class="action-btn" onclick="shareCard('khushboo')">
+      <span class="action-icon">🔗</span>
+      <span class="action-label">Share Link</span>
+    </button>
+  </div>
+
+  <!-- QR Code -->
+  <div class="qr-wrap">
+    <div class="qr-title">📷 Scan to Connect</div>
+    <div class="qr-box" id="qr-khushboo"></div>
+    <div class="qr-sub">Scan with phone camera · Opens contact card</div>
+  </div>
+
+  <!-- Share Row -->
+  <div class="share-row">
+    <button class="share-btn" onclick="shareViaWhatsApp('khushboo')">
+      <span class="share-icon">💚</span>
+      <span class="share-label">WhatsApp</span>
+    </button>
+    <button class="share-btn" onclick="shareViaEmail('khushboo')">
+      <span class="share-icon">📨</span>
+      <span class="share-label">Email</span>
+    </button>
+    <button class="share-btn" onclick="copyLink('khushboo')">
+      <span class="share-icon">📋</span>
+      <span class="share-label">Copy Link</span>
+    </button>
+    <button class="share-btn" onclick="nativeShare('khushboo')">
+      <span class="share-icon">⬆️</span>
+      <span class="share-label">More</span>
+    </button>
+  </div>
+
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── DATA ──────────────────────────────────────────
+const people = {
+  tanuj: {
+    name: 'Tanuj Mathur',
+    title: 'Technology Advisor',
+    org: 'TVM Enterprises',
+    phone: '3012334953',
+    email: 'contact@tvment.co',
+    url: 'https://tvment.co',
+    linkedin: 'https://linkedin.com/in/tanujmathur',
+    shareUrl: 'https://tvment.co',
+    shareText: 'Connect with Tanuj Mathur — Technology Advisor at TVM Enterprises'
+  },
+  khushboo: {
+    name: 'Khushboo Nag',
+    title: 'Founder',
+    org: 'TVM Enterprises',
+    phone: '',
+    email: 'contact@tvment.co',
+    url: 'https://tvment.co',
+    linkedin: 'https://linkedin.com/company/tvm-enterprises',
+    shareUrl: 'https://tvment.co',
+    shareText: 'Connect with Khushboo Nag — Founder at TVM Enterprises'
+  }
+};
+
+// ── TOGGLE ────────────────────────────────────────
+function switchCard(person) {
+  document.querySelectorAll('.card-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('card-' + person).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ── VCARD DOWNLOAD ────────────────────────────────
+function downloadVCard(person) {
+  const p = people[person];
+  const vcard = `BEGIN:VCARD
+VERSION:3.0
+FN:${p.name}
+N:${p.name.split(' ')[1]};${p.name.split(' ')[0]};;;
+ORG:${p.org}
+TITLE:${p.title}
+${p.phone ? 'TEL;TYPE=WORK,VOICE:' + p.phone : ''}
+EMAIL;TYPE=WORK:${p.email}
+URL:${p.url}
+END:VCARD`;
+
+  const blob = new Blob([vcard], { type: 'text/vcard' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = p.name.replace(' ', '_') + '.vcf';
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Contact saved!');
+}
+
+// ── QR CODES ─────────────────────────────────────
+window.addEventListener('load', () => {
+  new QRCode(document.getElementById('qr-tanuj'), {
+    text: 'https://tvment.co',
+    width: 160, height: 160,
+    colorDark: '#0a0a12', colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.H
+  });
+  new QRCode(document.getElementById('qr-khushboo'), {
+    text: 'https://tvment.co',
+    width: 160, height: 160,
+    colorDark: '#0a0a12', colorLight: '#ffffff',
+    correctLevel: QRCode.CorrectLevel.H
+  });
+});
+
+// ── SHARE FUNCTIONS ───────────────────────────────
+function shareViaWhatsApp(person) {
+  const p = people[person];
+  const msg = encodeURIComponent(`${p.shareText}\n\n📧 ${p.email}\n🌐 ${p.url}`);
+  window.open(`https://wa.me/?text=${msg}`, '_blank');
+}
+
+function shareViaEmail(person) {
+  const p = people[person];
+  const subject = encodeURIComponent(`${p.name} — ${p.org}`);
+  const body = encodeURIComponent(`Hi,\n\nI'd like to share my contact details:\n\n${p.name}\n${p.title} at ${p.org}\n\n📧 ${p.email}${p.phone ? '\n📞 ' + p.phone : ''}\n🌐 ${p.url}\n\nLooking forward to connecting!`);
+  window.location.href = `mailto:?subject=${subject}&body=${body}`;
+}
+
+function copyLink(person) {
+  const p = people[person];
+  navigator.clipboard.writeText(p.shareUrl).then(() => {
+    showToast('Link copied!');
+  });
+}
+
+function shareCard(person) {
+  nativeShare(person);
+}
+
+function nativeShare(person) {
+  const p = people[person];
+  if (navigator.share) {
+    navigator.share({
+      title: p.name + ' — ' + p.org,
+      text: p.shareText,
+      url: p.shareUrl
+    });
+  } else {
+    copyLink(person);
+  }
+}
+
+// ── TOAST ─────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>
